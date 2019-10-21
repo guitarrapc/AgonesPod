@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: agonespod
+  namespace: default
+  labels:
+    app: agonespod
+spec:
+  serviceAccountName: agones-rest
+  containers:
+  - name: agonespod
+    image: guitarrapc/agonespod:0.0.1
+    imagePullPolicy: Always
+    command:
+      - sleep
+      - "86400"
+

@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29318.209
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AgonesPod.ConsoleSample", "samples\AgonesPod.ConsoleSample\AgonesPod.ConsoleSample.csproj", "{BD52721A-0A19-49C1-B946-35EB5AD2E8CF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AgonesPod", "src\AgonesPod\AgonesPod.csproj", "{A94B2F90-D6EF-4361-820E-E0B280137461}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BD52721A-0A19-49C1-B946-35EB5AD2E8CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD52721A-0A19-49C1-B946-35EB5AD2E8CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD52721A-0A19-49C1-B946-35EB5AD2E8CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD52721A-0A19-49C1-B946-35EB5AD2E8CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A94B2F90-D6EF-4361-820E-E0B280137461}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A94B2F90-D6EF-4361-820E-E0B280137461}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A94B2F90-D6EF-4361-820E-E0B280137461}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A94B2F90-D6EF-4361-820E-E0B280137461}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A0E861D6-65B9-47EE-BC62-F5A4993D7739}
+	EndGlobalSection
+EndGlobal
