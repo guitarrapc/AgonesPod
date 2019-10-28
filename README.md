@@ -5,18 +5,16 @@ Kubernetes Client to manipulate Agones.
 ## TODO
 
 - [x] Get GameServers
-- [ ] Post Allocate GameServer
-- [ ] Post L
+- [x] Post Allocate GameServer
 
 ## How to run
 
 Build Docker Image
 
 ```
-cd samples
-docker build -t agonespod:0.0.1 -f AgonesPod.ConsoleSample/Dockerfile .
-docker tag agonespod:0.0.1 guitarrapc/agonespod:0.0.1
-docker push guitarrapc/agonespod:0.0.1
+docker build -t agonespod:0.0.2 -f samples/AgonesPod.ConsoleSample/Dockerfile .
+docker tag agonespod:0.0.2 guitarrapc/agonespod:0.0.2
+docker push guitarrapc/agonespod:0.0.2
 ```
 
 Apply to your kubernetes
@@ -34,11 +32,25 @@ kubectl exec -it agonespod dotnet AgonesPod.ConsoleSample.dll
 
 ## debug
 
-publish and cp to pod.
+publish on linux and cp to pod and run.
 
 ```
 dotnet publish
-kubectl cp ./samples/AgonesPod.ConsoleSample/bin/Debug/netcoreapp3.0/publish/AgonesPod.ConsoleSample.dll gameserverpod:/app/AgonesPod.ConsoleSample.dll
+kubectl cp ./samples/AgonesPod.ConsoleSample/bin/Debug/netcoreapp3.0/publish/AgonesPod.ConsoleSample.dll agonespod:/app/AgonesPod.ConsoleSample.dll
+kubectl cp ./samples/AgonesPod.ConsoleSample/bin/Debug/netcoreapp3.0/publish/AgonesPod.dll agonespod:/app/AgonesPod.dll
+kubectl exec -it agonespod dotnet AgonesPod.ConsoleSample.dll
+```
+
+curl allocate
+```
+kubectl exec -it agonespod /bin/bash
+TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+curl -H "Authorization: Bearer $TOKEN" -d '{"apiVersion":"allocation.agones.dev/v1","kind":"GameServerAllocation","spec":{"required":{"matchLabels":{"agones.dev/fleet":"magiconion-chatserver"}}}}' -H "Content-Type: application/json" -X POST https://$KUBERNETES_SERVICE_HOST:443/apis/allocation.agones.dev/v1/namespaces/default/gameserverallocations -k
+```
+
+response
+```json
+{"kind":"GameServerAllocation","apiVersion":"allocation.agones.dev/v1","metadata":{"name":"simple-udp-btdzt-fn65w","namespace":"default","creationTimestamp":"2019-10-28T06:20:08Z"},"spec":{"multiClusterSetting":{"policySelector":{}},"required":{"matchLabels":{"agones.dev/fleet":"simple-udp"}},"scheduling":"Packed","metadata":{}},"status":{"state":"Allocated","gameServerName":"simple-udp-btdzt-fn65w","ports":[{"name":"default","port":7934}],"address":"192.168.65.3","nodeName":"docker-desktop"}}
 ```
 
 ## REF

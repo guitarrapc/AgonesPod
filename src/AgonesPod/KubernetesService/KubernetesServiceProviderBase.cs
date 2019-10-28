@@ -9,12 +9,16 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using AgonesPod.Internal.Utf8Json;
+using AgonesPod.KubernetesService.Requests;
 using AgonesPod.KubernetesService.Respones;
+using Utf8Json;
 
 namespace AgonesPod
 {
     public abstract class KubernetesServiceProviderBase : IKubernetesServiceProvider
     {
+        private static readonly Encoding encoding = new UTF8Encoding(false);
+        private static readonly MediaTypeHeaderValue applicationJsonContentType = new MediaTypeHeaderValue("application/json");
         public abstract string AccessToken { get; }
         public abstract string HostName { get; }
         public abstract string NameSpace { get; }
@@ -23,12 +27,10 @@ namespace AgonesPod
 
         public bool SkipCertificateValidation { get; set; } = true;
 
-        public async Task<IGameServerInfo[]> GetGameServersAsync()
+        public async ValueTask<IGameServerInfo[]> GetGameServersAsync()
         {
             using (var httpClient = CreateHttpClient())
             {
-                // Endpoints:
-                // /apis/{APIGroup}/{VERSION}/{RESOURCE}/
                 // /apis/agones.dev/v1/gameservers/
 
                 var @namespace = NameSpace;
@@ -38,7 +40,8 @@ namespace AgonesPod
                 var gameserverInfos = response.items.Select(x => new GameServerInfo()
                 {
                     Host = x.status.address,
-                    Port = x.spec.ports.Select(y => y.hostPort).FirstOrDefault().ToString(),
+                    Port = x.status.ports.Select(y => y.port).FirstOrDefault().ToString(),
+                    State = x.status.state,
                 })
                 .ToArray();
 
@@ -51,9 +54,27 @@ namespace AgonesPod
             }
         }
 
-        public Task AllocateGameServersAsync()
+        public async ValueTask<IGameServerAllocationInfo> AllocateGameServersAsync(string fleetName)
         {
-            throw new NotImplementedException();
+            using (var httpClient = CreateHttpClient())
+            {
+                // /apis/allocation.agones.dev/v1/namespaces/{namespace}/gameserverallocations
+
+                var @namespace = NameSpace;
+                var hostName = HostName;
+                var allocation = await AllocateGameServer(httpClient, $"/apis/allocation.agones.dev/v1/namespaces/{@namespace}/gameserverallocations", fleetName);
+                var response = Utf8Json.JsonSerializer.Deserialize<GameServerAllocationResponse>(allocation);
+                var allocationInfo = new GameServerAllocationInfo()
+                {
+                    Address = response?.status?.address,
+                    GameServerName = response?.status?.gameServerName,
+                    NodeName = response?.status?.nodeName,
+                    Scheduling = response?.spec?.scheduling,
+                    Port = response?.status.ports?.First().port ?? 0,
+                    Status = response?.status?.state,
+                };
+                return allocationInfo;
+            }
         }
 
         private HttpClient CreateHttpClient()
@@ -71,16 +92,45 @@ namespace AgonesPod
             return httpClient;
         }
 
-        private async Task<byte[]> GetGameServer(HttpClient httpClient, string apiPath)
+        private async ValueTask<byte[]> GetGameServer(HttpClient httpClient, string apiPath)
         {
             var bytes = await httpClient.GetByteArrayAsync(KubernetesServiceEndPoint + apiPath).ConfigureAwait(false);
             return bytes;
         }
 
-        private async Task<JsonReader> GetGameServerJSon(HttpClient httpClient, string apiPath)
+        private async ValueTask<byte[]> AllocateGameServer(HttpClient httpClient, string apiPath, string fleetName)
         {
-            var bytes = await httpClient.GetByteArrayAsync(KubernetesServiceEndPoint + apiPath).ConfigureAwait(false);
-            return new JsonReader(bytes);
+            var body = GameServerAllocationRequest.CreateRequest(fleetName);
+            var json = JsonSerializer.ToJsonString(body);
+            using (var request = new HttpRequestMessage(HttpMethod.Post, KubernetesServiceEndPoint + apiPath))
+            {
+                request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {AccessToken}");
+
+                // agones can not accept content-type with media-type. 
+                // see: https://github.com/googleforgames/agones/blob/0e244fddf938e88dc5156ac2c7339adbb230daee/vendor/k8s.io/apimachinery/pkg/runtime/codec.go#L218-L220
+                var requestContent = new StringContent(json, null, "application/json");
+                requestContent.Headers.ContentType = applicationJsonContentType;
+                request.Content = requestContent;
+
+                var response = await httpClient.SendAsync(request);
+
+                //todo: error handling
+                if (!response.IsSuccessStatusCode)
+                {
+                    var content = response.Content.ReadAsStringAsync();
+                    Console.WriteLine(content);
+                    return Array.Empty<byte>();
+                }
+
+                var bytes = await response.Content.ReadAsByteArrayAsync();
+                return bytes;
+            }
         }
+
+        //private async Task<JsonReader> GetGameServerJSon(HttpClient httpClient, string apiPath)
+        //{
+        //    var bytes = await httpClient.GetByteArrayAsync(KubernetesServiceEndPoint + apiPath).ConfigureAwait(false);
+        //    return new JsonReader(bytes);
+        //}
     }
 }

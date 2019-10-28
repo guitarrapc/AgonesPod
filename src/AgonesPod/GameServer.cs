@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace AgonesPod
 {
@@ -62,14 +63,19 @@ namespace AgonesPod
             }
         }
 
+        public static async ValueTask<IGameServerAllocationInfo> AllocateAsync(string fleetName)
+        {
+            return await _serviceProvider.AllocateGameServersAsync(fleetName);
+        }
+
         public static void RegisterServiceProvider(IKubernetesServiceProvider provider)
             => _serviceProvider = provider ?? throw new ArgumentNullException(nameof(provider));
 
         private static IKubernetesServiceProvider GetDefaultProvider()
         {
-            return (Environment.OSVersion.Platform == PlatformID.Unix)
-                ? new UnixKubernetesServiceProvider()
-                : throw new NotImplementedException("Windows is not supported");
+            return Environment.OSVersion.Platform == PlatformID.Unix
+                ? (IKubernetesServiceProvider)new UnixKubernetesServiceProvider()
+                : (IKubernetesServiceProvider)new WindowsKubernetesServiceProvider();
         }
     }
 }

@@ -22,6 +22,15 @@ rules:
   - list
   - update
   - watch
+- apiGroups:
+  - allocation.agones.dev
+  resources:
+  - gameserverallocations
+  verbs:
+  - list
+  - update
+  - watch
+  - create
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding

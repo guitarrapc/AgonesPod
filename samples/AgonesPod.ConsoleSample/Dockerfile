@@ -3,10 +3,12 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.0-buster AS build
 WORKDIR /src
-COPY ["AgonesPod.ConsoleSample/AgonesPod.ConsoleSample.csproj", "AgonesPod.ConsoleSample/"]
-RUN dotnet restore "AgonesPod.ConsoleSample/AgonesPod.ConsoleSample.csproj"
+COPY ["samples/AgonesPod.ConsoleSample/AgonesPod.ConsoleSample.csproj", "samples/AgonesPod.ConsoleSample/"]
+RUN dotnet restore "samples/AgonesPod.ConsoleSample/AgonesPod.ConsoleSample.csproj"
+COPY ["src/AgonesPod/AgonesPod.csproj", "src/AgonesPod/"]
+RUN dotnet restore "src/AgonesPod/AgonesPod.csproj"
 COPY . .
-WORKDIR "/src/AgonesPod.ConsoleSample"
+WORKDIR "/src/samples/AgonesPod.ConsoleSample"
 RUN dotnet build "AgonesPod.ConsoleSample.csproj" -c Release -o /app/build
 
 FROM build AS publish
