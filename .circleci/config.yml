@@ -7,6 +7,12 @@ executors:
       DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
       NUGET_XMLDOC_MODE: skip
       BUILD_CONFIG: Release
+  dotnet:
+    docker:
+      - image: docker:17.09.0-ce-git
+    environment:
+      OWNER: guitarrapc
+      IMAGE_NAME: agonespod
 jobs:
   build-test:
     executor: dotnet
@@ -37,6 +43,16 @@ jobs:
       - store_artifacts:
           path: ./src/AgonesPod/bin/Release
           destination: ./AgonesPod/
+  docker:
+    executor: dotnet
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 17.09.0-ce
+      - run: docker build --build-arg VCS_REF=$(git rev-parse --short HEAD) -t ${OWNER}/${IMAGE_NAME}:latest -f samples/AgonesPod.ConsoleSample/Dockerfile .
+      - run: docker tag ${OWNER}/${IMAGE_NAME}:latest ${OWNER}/${IMAGE_NAME}:$CIRCLE_TAG
+      - run: docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
+      - run: docker push ${OWNER}/${IMAGE_NAME}
 workflows:
   build-and-push:
     jobs:
@@ -50,3 +66,12 @@ workflows:
               only: /^[0-9](\.[0-9]){2}$/
             branches:
               ignore: /.*/
+      - docker:
+          context: dockerhub-login
+          requires:
+            - build-test
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^[0-9]+\.[0-9]+\.[0-9]+$/
