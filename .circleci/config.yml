@@ -7,7 +7,7 @@ executors:
       DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
       NUGET_XMLDOC_MODE: skip
       BUILD_CONFIG: Release
-  dotnet:
+  docker-in-docker:
     docker:
       - image: docker:17.09.0-ce-git
     environment:
@@ -44,7 +44,7 @@ jobs:
           path: ./src/AgonesPod/bin/Release
           destination: ./AgonesPod/
   docker:
-    executor: dotnet
+    executor: docker-in-docker
     steps:
       - checkout
       - setup_remote_docker:
