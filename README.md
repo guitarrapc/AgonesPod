@@ -1,3 +1,7 @@
+[![CircleCI](https://circleci.com/gh/guitarrapc/AgonesPod.svg?style=svg)](https://circleci.com/gh/guitarrapc/AgonesPod) [![NuGet](https://img.shields.io/nuget/v/agonespod.svg)](https://www.nuget.org/packages/agonespod) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) 
+
+[![hub](https://img.shields.io/docker/pulls/guitarrapc/agonespod.svg)](https://hub.docker.com/r/guitarrapc/agonespod/) [![](https://images.microbadger.com/badges/image/guitarrapc/agones.svg)](https://microbadger.com/images/guitarrapc/agones "Get your own image badge on microbadger.com") [![](https://images.microbadger.com/badges/version/guitarrapc/agones.svg)](https://microbadger.com/images/guitarrapc/agones "Get your own version badge on microbadger.com")
+
 ## AgonesPod
 
 Kubernetes Client to manipulate Agones.
