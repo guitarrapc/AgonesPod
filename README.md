@@ -10,6 +10,7 @@ Kubernetes Client to manipulate Agones.
 
 - [x] Get GameServers
 - [x] Post Allocate GameServer
+- [ ] Remove GameServer
 
 ## how to run
 
@@ -31,9 +32,9 @@ kubectl exec -it agonespod dotnet AgonesPod.ConsoleSample.dll
 Build and push Docker Image
 
 ```
-docker build -t agonespod:0.0.3 -f samples/AgonesPod.ConsoleSample/Dockerfile .
-docker tag agonespod:0.0.3 guitarrapc/agonespod:0.0.3
-docker push guitarrapc/agonespod:0.0.3
+docker build -t agonespod:0.3.1 -f samples/AgonesPod.ConsoleSample/Dockerfile .
+docker tag agonespod:0.3.1 guitarrapc/agonespod:0.3.1
+docker push guitarrapc/agonespod:0.3.1
 ```
 
 ## debug
@@ -42,9 +43,9 @@ publish on linux and cp to pod and run.
 
 ```
 dotnet publish
-kubectl cp ./samples/AgonesPod.ConsoleSample/bin/Debug/netcoreapp3.0/publish/AgonesPod.ConsoleSample.dll agonespod:/app/AgonesPod.ConsoleSample.dll
-kubectl cp ./samples/AgonesPod.ConsoleSample/bin/Debug/netcoreapp3.0/publish/AgonesPod.dll agonespod:/app/AgonesPod.dll
-kubectl exec -it agonespod dotnet AgonesPod.ConsoleSample.dll
+kubectl cp ./samples/AgonesPod.ConsoleSample/bin/Debug/netcoreapp2.2/publish/AgonesPod.ConsoleSample.dll agonespod:/app/AgonesPod.ConsoleSample.dll
+kubectl cp ./samples/AgonesPod.ConsoleSample/bin/Debug/netcoreapp2.2/publish/AgonesPod.dll agonespod:/app/AgonesPod.dll
+kubectl exec -it agonespod dotnet AgonesPod.ConsoleSample.dll getgameserver
 ```
 
 ### cURL

@@ -30,6 +30,7 @@ namespace AgonesPod.ConsoleSample
                 {
                     Context.Logger.LogInformation($"  Host:Port = {server.Host}:{server.Port}");
                     Context.Logger.LogInformation($"    {nameof(server.IsRunningOnKubernetes)} : {server.IsRunningOnKubernetes}");
+                    Context.Logger.LogInformation($"    {nameof(server.Name)} : {server.Name}");
                     Context.Logger.LogInformation($"    {nameof(server.State)} : {server.State}");
                 }
             }

@@ -8,10 +8,6 @@ namespace AgonesPod
 {
     public class GameServer
     {
-        public void Read(string json)
-        {
-
-        }
         // lock
         static readonly object _syncObject = new object();
 

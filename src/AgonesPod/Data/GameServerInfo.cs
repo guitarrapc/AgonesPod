@@ -7,6 +7,7 @@ namespace AgonesPod
     public interface IGameServerInfo
     {
         bool IsRunningOnKubernetes { get; }
+        string Name { get; }
         string Host { get; }
         string Port { get; }
         string State { get; }
@@ -15,6 +16,7 @@ namespace AgonesPod
     internal class GameServerInfo : IGameServerInfo
     {
         public bool IsRunningOnKubernetes => true;
+        public string Name { get; set; }
         public string Host { get; set; }
         public string Port { get; set; }
         public string State { get; set; }
@@ -28,6 +30,7 @@ namespace AgonesPod
     internal class PseudoGameServerInfo : IGameServerInfo
     {
         public bool IsRunningOnKubernetes => false;
+        public string Name => "";
         public string Host => Environment.MachineName;
         public string Port => "0";
         public string State => "Allocated";

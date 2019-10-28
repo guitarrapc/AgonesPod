@@ -39,6 +39,7 @@ namespace AgonesPod
                 var response = Utf8Json.JsonSerializer.Deserialize<GameServersResponse>(gameServers);
                 var gameserverInfos = response.items.Select(x => new GameServerInfo()
                 {
+                    Name = x.metadata.name,
                     Host = x.status.address,
                     Port = x.status.ports.Select(y => y.port).FirstOrDefault().ToString(),
                     State = x.status.state,
