@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using MicroBatchFramework;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace AgonesPod.ConsoleSample
 {
@@ -7,24 +10,58 @@ namespace AgonesPod.ConsoleSample
     {
         static async Task Main(string[] args)
         {
-            Console.WriteLine("# GetGameServer");
-            foreach (var server in GameServer.Current)
+            await BatchHost.CreateDefaultBuilder()
+                .RunBatchEngineAsync<AgonesConsole>(args);
+        }
+
+        public class AgonesConsole : BatchBase
+        {
+            readonly string _defaultFleetName;
+            public AgonesConsole(IConfiguration config)
             {
-                Console.WriteLine($"  Host:Port = {server.Host}:{server.Port}");
-                Console.WriteLine($"    {nameof(server.IsRunningOnKubernetes)} : {server.IsRunningOnKubernetes}");
-                Console.WriteLine($"    {nameof(server.State)} : {server.State}");
+                _defaultFleetName = config.GetValue("DEFAULT_FLEET_NAME", "");
             }
 
-            Console.WriteLine("# AllocateGameServer");
-            var allocation = await GameServer.AllocateAsync("magiconion-chatserver");
-            Console.WriteLine($"  Host:Port = {nameof(allocation)} = {allocation}");
-            Console.WriteLine($"    {nameof(allocation.IsAllocated)} = {allocation.IsAllocated}");
-            Console.WriteLine($"    {nameof(allocation.Status)} = {allocation.Status}");
-            Console.WriteLine($"    {nameof(allocation.Scheduling)} = {allocation.Scheduling}");
-            Console.WriteLine($"    {nameof(allocation.GameServerName)} = {allocation.GameServerName}");
-            Console.WriteLine($"    {nameof(allocation.Address)} = {allocation.Address}");
-            Console.WriteLine($"    {nameof(allocation.Port)} = {allocation.Port}");
-            Console.WriteLine($"    {nameof(allocation.NodeName)} = {allocation.NodeName}");
+            [Command("getgameserver", "Get GameServer Info")]
+            public void GetGameServer()
+            {
+                Context.Logger.LogInformation("# GetGameServer");
+                foreach (var server in GameServer.Current)
+                {
+                    Context.Logger.LogInformation($"  Host:Port = {server.Host}:{server.Port}");
+                    Context.Logger.LogInformation($"    {nameof(server.IsRunningOnKubernetes)} : {server.IsRunningOnKubernetes}");
+                    Context.Logger.LogInformation($"    {nameof(server.State)} : {server.State}");
+                }
+            }
+
+            [Command("allocategameserver", "Allocate Readied GameServer")]
+            public async Task AllocateGameServer([Option("-f", "fleet name to allocate gameserver")]string fleetName = "")
+            {
+                Context.Logger.LogInformation("# AllocateGameServer");
+
+                if (string.IsNullOrWhiteSpace(fleetName))
+                {
+                    if (!string.IsNullOrWhiteSpace(_defaultFleetName))
+                    {
+                        Context.Logger.LogDebug("fleetName arg was missing, using default fleet name retrieved from env DEFAULT_FLEET_NAME.");
+                        fleetName = _defaultFleetName;
+                    }
+                    else
+                    {
+                        Context.Logger.LogWarning("fleetName arg was missing and default fleet name also missing. Please set env DEFAULT_FLEET_NAME to set default fleet name.");
+                    }
+                }
+
+                var allocation = await GameServer.AllocateAsync(fleetName);
+                Context.Logger.LogInformation($"  Host:Port = {nameof(allocation)} = {allocation}");
+                Context.Logger.LogInformation($"    {nameof(allocation.IsAllocated)} = {allocation.IsAllocated}");
+                Context.Logger.LogInformation($"    {nameof(allocation.Status)} = {allocation.Status}");
+                Context.Logger.LogInformation($"    {nameof(allocation.Scheduling)} = {allocation.Scheduling}");
+                Context.Logger.LogInformation($"    {nameof(allocation.GameServerName)} = {allocation.GameServerName}");
+                Context.Logger.LogInformation($"    {nameof(allocation.Address)} = {allocation.Address}");
+                Context.Logger.LogInformation($"    {nameof(allocation.Port)} = {allocation.Port}");
+                Context.Logger.LogInformation($"    {nameof(allocation.NodeName)} = {allocation.NodeName}");
+            }
         }
     }
 }

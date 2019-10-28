@@ -30,7 +30,7 @@ namespace AgonesPod
         public bool IsRunningOnKubernetes => false;
         public string Host => Environment.MachineName;
         public string Port => "0";
-        public string State => "Ready";
+        public string State => "Allocated";
 
         public override string ToString()
         {

@@ -1,7 +1,8 @@
 {
   "profiles": {
     "GameServerService": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "getgameserver"
     },
     "Docker": {
       "commandName": "Docker"

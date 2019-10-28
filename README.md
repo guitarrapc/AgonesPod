@@ -2,20 +2,12 @@
 
 Kubernetes Client to manipulate Agones.
 
-## TODO
+## todo
 
 - [x] Get GameServers
 - [x] Post Allocate GameServer
 
-## How to run
-
-Build Docker Image
-
-```
-docker build -t agonespod:0.0.2 -f samples/AgonesPod.ConsoleSample/Dockerfile .
-docker tag agonespod:0.0.2 guitarrapc/agonespod:0.0.2
-docker push guitarrapc/agonespod:0.0.2
-```
+## how to run
 
 Apply to your kubernetes
 
@@ -30,6 +22,16 @@ Run agonespod on pod.
 kubectl exec -it agonespod dotnet AgonesPod.ConsoleSample.dll
 ```
 
+## docker
+
+Build and push Docker Image
+
+```
+docker build -t agonespod:0.0.3 -f samples/AgonesPod.ConsoleSample/Dockerfile .
+docker tag agonespod:0.0.3 guitarrapc/agonespod:0.0.3
+docker push guitarrapc/agonespod:0.0.3
+```
+
 ## debug
 
 publish on linux and cp to pod and run.
@@ -41,7 +43,14 @@ kubectl cp ./samples/AgonesPod.ConsoleSample/bin/Debug/netcoreapp3.0/publish/Ago
 kubectl exec -it agonespod dotnet AgonesPod.ConsoleSample.dll
 ```
 
+### cURL
+
+AgonesPod checking kubernetes API && Agones Controller behaviour with cURL.
+
+> [Access Agones via the Kubernetes API \| Agones](https://agones.dev/site/docs/guides/access-api/)
+
 curl allocate
+
 ```
 kubectl exec -it agonespod /bin/bash
 TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
@@ -49,6 +58,7 @@ curl -H "Authorization: Bearer $TOKEN" -d '{"apiVersion":"allocation.agones.dev/
 ```
 
 response
+
 ```json
 {"kind":"GameServerAllocation","apiVersion":"allocation.agones.dev/v1","metadata":{"name":"simple-udp-btdzt-fn65w","namespace":"default","creationTimestamp":"2019-10-28T06:20:08Z"},"spec":{"multiClusterSetting":{"policySelector":{}},"required":{"matchLabels":{"agones.dev/fleet":"simple-udp"}},"scheduling":"Packed","metadata":{}},"status":{"state":"Allocated","gameServerName":"simple-udp-btdzt-fn65w","ports":[{"name":"default","port":7934}],"address":"192.168.65.3","nodeName":"docker-desktop"}}
 ```
