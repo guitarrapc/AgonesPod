@@ -41,7 +41,9 @@ namespace AgonesPod
                 {
                     Name = x.metadata.name,
                     Host = x.status.address,
-                    Port = x.status.ports.Select(y => y.port).FirstOrDefault().ToString(),
+                    Port = x.status.ports.Any() 
+                    ? x.status.ports.FirstOrDefault().port
+                    : 0,
                     State = x.status.state,
                 })
                 .ToArray();
@@ -67,12 +69,13 @@ namespace AgonesPod
                 var response = Utf8Json.JsonSerializer.Deserialize<GameServerAllocationResponse>(allocation);
                 var allocationInfo = new GameServerAllocationInfo()
                 {
+                    Name = response.metadata.name,
                     Address = response?.status?.address,
-                    GameServerName = response?.status?.gameServerName,
+                    Host = response?.status?.gameServerName,
                     NodeName = response?.status?.nodeName,
                     Scheduling = response?.spec?.scheduling,
                     Port = response?.status.ports?.First().port ?? 0,
-                    Status = response?.status?.state,
+                    State = response?.status?.state,
                 };
                 return allocationInfo;
             }

@@ -56,9 +56,9 @@ namespace AgonesPod.ConsoleSample
                 var allocation = await GameServer.AllocateAsync(fleetName);
                 Context.Logger.LogInformation($"  Host:Port = {nameof(allocation)} = {allocation}");
                 Context.Logger.LogInformation($"    {nameof(allocation.IsAllocated)} = {allocation.IsAllocated}");
-                Context.Logger.LogInformation($"    {nameof(allocation.Status)} = {allocation.Status}");
+                Context.Logger.LogInformation($"    {nameof(allocation.State)} = {allocation.State}");
                 Context.Logger.LogInformation($"    {nameof(allocation.Scheduling)} = {allocation.Scheduling}");
-                Context.Logger.LogInformation($"    {nameof(allocation.GameServerName)} = {allocation.GameServerName}");
+                Context.Logger.LogInformation($"    {nameof(allocation.Host)} = {allocation.Host}");
                 Context.Logger.LogInformation($"    {nameof(allocation.Address)} = {allocation.Address}");
                 Context.Logger.LogInformation($"    {nameof(allocation.Port)} = {allocation.Port}");
                 Context.Logger.LogInformation($"    {nameof(allocation.NodeName)} = {allocation.NodeName}");

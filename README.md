@@ -8,8 +8,8 @@ Kubernetes Client to manipulate Agones.
 
 ## todo
 
-- [x] `GameServers` (GET)
-- [x] `Allocate` GameServer (POST)
+- [x] GetGameServersAsync: `GameServers` (GET)
+- [x] AllocateGameServersAsync: `Allocate` GameServer (POST)
 
 > NOTE: Shutdown()
 
@@ -33,9 +33,9 @@ kubectl exec -it agonespod dotnet AgonesPod.ConsoleSample.dll
 Build and push Docker Image
 
 ```
-docker build -t agonespod:0.3.1 -f samples/AgonesPod.ConsoleSample/Dockerfile .
-docker tag agonespod:0.3.1 guitarrapc/agonespod:0.3.1
-docker push guitarrapc/agonespod:0.3.1
+docker build -t agonespod:0.3.2 -f samples/AgonesPod.ConsoleSample/Dockerfile .
+docker tag agonespod:0.3.2 guitarrapc/agonespod:0.3.2
+docker push guitarrapc/agonespod:0.3.2
 ```
 
 ## debug
