@@ -33,9 +33,9 @@ kubectl exec -it agonespod dotnet AgonesPod.ConsoleSample.dll
 Build and push Docker Image
 
 ```
-docker build -t agonespod:0.3.2 -f samples/AgonesPod.ConsoleSample/Dockerfile .
-docker tag agonespod:0.3.2 guitarrapc/agonespod:0.3.2
-docker push guitarrapc/agonespod:0.3.2
+docker build -t agonespod:0.4.1 -f samples/AgonesPod.ConsoleSample/Dockerfile .
+docker tag agonespod:0.4.1 guitarrapc/agonespod:0.4.1
+docker push guitarrapc/agonespod:0.4.1
 ```
 
 ## debug
@@ -47,6 +47,10 @@ dotnet publish
 kubectl cp ./samples/AgonesPod.ConsoleSample/bin/Debug/netcoreapp2.2/publish/AgonesPod.ConsoleSample.dll agonespod:/app/AgonesPod.ConsoleSample.dll
 kubectl cp ./samples/AgonesPod.ConsoleSample/bin/Debug/netcoreapp2.2/publish/AgonesPod.dll agonespod:/app/AgonesPod.dll
 kubectl exec -it agonespod dotnet AgonesPod.ConsoleSample.dll getgameserver
+```
+```
+kubectl exec -it agonespod -- dotnet AgonesPod.ConsoleSample.dll getgameserver
+kubectl exec -it agonespod -- dotnet AgonesPod.ConsoleSample.dll allocategameserver -f magiconion-chatserver
 ```
 
 ### cURL

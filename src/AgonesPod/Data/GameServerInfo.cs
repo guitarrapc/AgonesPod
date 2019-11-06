@@ -9,7 +9,7 @@ namespace AgonesPod
         bool IsRunningOnKubernetes { get; }
         bool IsAllocated { get; }
         string Name { get; }
-        string Host { get; }
+        string Address { get; }
         int Port { get; }
         string State { get; }
     }
@@ -19,13 +19,13 @@ namespace AgonesPod
         public bool IsRunningOnKubernetes => true;
         public bool IsAllocated => State == "Allocated";
         public string Name { get; set; }
-        public string Host { get; set; }
+        public string Address { get; set; }
         public int Port { get; set; }
         public string State { get; set; }
 
         public override string ToString()
         {
-            return $"{Host}:{Port}";
+            return $"{Address}:{Port}";
         }
     }
 
@@ -34,13 +34,13 @@ namespace AgonesPod
         public bool IsRunningOnKubernetes => false;
         public bool IsAllocated => State == "Allocated";
         public string Name => "";
-        public string Host => Environment.MachineName;
+        public string Address => Environment.MachineName;
         public int Port => 0;
         public string State => "Allocated";
 
         public override string ToString()
         {
-            return $"{Host}:{Port}";
+            return $"{Address}:{Port}";
         }
     }
 }

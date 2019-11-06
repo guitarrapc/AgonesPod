@@ -8,7 +8,6 @@ namespace AgonesPod
     public interface IGameServerAllocationInfo : IGameServerInfo
     {
         string Scheduling { get; }
-        string Address { get; }
         string NodeName { get; }
     }
 
@@ -19,7 +18,6 @@ namespace AgonesPod
         public string Name { get; set; }
         public string Scheduling { get; set; }
         public string State { get; set; }
-        public string Host { get; set; }
         public string Address { get; set; }
         public string NodeName { get; set; }
         public int Port { get; set; }
@@ -37,14 +35,13 @@ namespace AgonesPod
         public string Name { get; set; }
         public string Scheduling => "Packed";
         public string State => "Allocated";
-        public string Host => throw new NotImplementedException();
         public string Address => throw new NotImplementedException();
         public string NodeName => throw new NotImplementedException();
         public int Port => throw new NotImplementedException();
 
         public override string ToString()
         {
-            return $"{Host}:{Port}";
+            return $"{Address}:{Port}";
         }
     }
 }

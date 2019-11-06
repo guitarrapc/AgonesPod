@@ -40,7 +40,7 @@ namespace AgonesPod
                 var gameserverInfos = response.items.Select(x => new GameServerInfo()
                 {
                     Name = x.metadata.name,
-                    Host = x.status.address,
+                    Address = x.status.address,
                     Port = x.status.ports.Any() 
                     ? x.status.ports.FirstOrDefault().port
                     : 0,
@@ -71,7 +71,6 @@ namespace AgonesPod
                 {
                     Name = response.metadata.name,
                     Address = response?.status?.address,
-                    Host = response?.status?.gameServerName,
                     NodeName = response?.status?.nodeName,
                     Scheduling = response?.spec?.scheduling,
                     Port = response?.status.ports?.First().port ?? 0,
