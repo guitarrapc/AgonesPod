@@ -33,7 +33,7 @@ namespace AgonesPod
     {
         public bool IsRunningOnKubernetes => false;
         public bool IsAllocated => State == "Allocated";
-        public string Name => "";
+        public string Name => "localhost";
         public string Address => Environment.MachineName;
         public int Port => 0;
         public string State => "Allocated";
