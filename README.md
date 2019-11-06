@@ -8,9 +8,10 @@ Kubernetes Client to manipulate Agones.
 
 ## todo
 
-- [x] Get GameServers
-- [x] Post Allocate GameServer
-- [ ] Remove GameServer
+- [x] `GameServers` (GET)
+- [x] `Allocate` GameServer (POST)
+
+> NOTE: Shutdown()
 
 ## how to run
 

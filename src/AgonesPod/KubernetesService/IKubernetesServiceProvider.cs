@@ -14,6 +14,6 @@ namespace AgonesPod
         bool IsRunningOnKubernetes { get; }
 
         ValueTask<IGameServerInfo[]> GetGameServersAsync();
-        ValueTask<IGameServerAllocationInfo> AllocateGameServersAsync(string fleetName);
+        ValueTask<IGameServerAllocationInfo> AllocateGameServerAsync(string fleetName);
     }
 }

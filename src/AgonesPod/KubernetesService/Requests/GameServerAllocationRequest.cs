@@ -5,6 +5,7 @@ using System.Text;
 
 namespace AgonesPod.KubernetesService.Requests
 {
+    // ref: https://agones.dev/site/docs/reference/gameserverallocation/
     // '{"apiVersion":"allocation.agones.dev/v1","kind":"GameServerAllocation","spec":{"required":{"matchLabels":{"agones.dev/fleet":"FLEETNAME"}}}}'
     public class GameServerAllocationRequest
     {
@@ -20,7 +21,11 @@ namespace AgonesPod.KubernetesService.Requests
                         {
                             agonesdevfleet = fleetName,
                         }
+                        // TODO: add matchExpressions?
                     }
+                    //TODO: add preferred?
+                    //TODO: add scheduling?
+                    //TODO: add metadata?
                 }
             };
             return request;

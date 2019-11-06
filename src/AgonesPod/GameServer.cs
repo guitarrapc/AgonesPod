@@ -61,7 +61,7 @@ namespace AgonesPod
 
         public static async ValueTask<IGameServerAllocationInfo> AllocateAsync(string fleetName)
         {
-            return await _serviceProvider.AllocateGameServersAsync(fleetName);
+            return await _serviceProvider.AllocateGameServerAsync(fleetName);
         }
 
         public static void RegisterServiceProvider(IKubernetesServiceProvider provider)

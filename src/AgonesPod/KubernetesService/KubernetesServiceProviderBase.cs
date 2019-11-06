@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -35,7 +35,7 @@ namespace AgonesPod
 
                 var @namespace = NameSpace;
                 var hostName = HostName;
-                var gameServers = await GetGameServer(httpClient, $"/apis/agones.dev/v1/gameservers");
+                var gameServers = await GetGameServers(httpClient, $"/apis/agones.dev/v1/gameservers");
                 var response = Utf8Json.JsonSerializer.Deserialize<GameServersResponse>(gameServers);
                 var gameserverInfos = response.items.Select(x => new GameServerInfo()
                 {
@@ -55,7 +55,7 @@ namespace AgonesPod
             }
         }
 
-        public async ValueTask<IGameServerAllocationInfo> AllocateGameServersAsync(string fleetName)
+        public async ValueTask<IGameServerAllocationInfo> AllocateGameServerAsync(string fleetName)
         {
             using (var httpClient = CreateHttpClient())
             {
@@ -93,7 +93,7 @@ namespace AgonesPod
             return httpClient;
         }
 
-        private async ValueTask<byte[]> GetGameServer(HttpClient httpClient, string apiPath)
+        private async ValueTask<byte[]> GetGameServers(HttpClient httpClient, string apiPath)
         {
             var bytes = await httpClient.GetByteArrayAsync(KubernetesServiceEndPoint + apiPath).ConfigureAwait(false);
             return bytes;
@@ -109,7 +109,8 @@ namespace AgonesPod
 
                 // agones can not accept content-type with media-type. 
                 // see: https://github.com/googleforgames/agones/blob/0e244fddf938e88dc5156ac2c7339adbb230daee/vendor/k8s.io/apimachinery/pkg/runtime/codec.go#L218-L220
-                var requestContent = new StringContent(json, null, "application/json");
+                var requestContent = new StringContent(json);
+                // re-apply request content-type to remove `media-type: utf8` from contet-type.
                 requestContent.Headers.ContentType = applicationJsonContentType;
                 request.Content = requestContent;
 
