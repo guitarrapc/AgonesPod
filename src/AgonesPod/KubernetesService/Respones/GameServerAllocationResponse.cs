@@ -16,7 +16,7 @@ namespace AgonesPod.KubernetesService.Respones
         public class Metadata
         {
             public string name { get; set; }
-            public string _namespace { get; set; }
+            public string @namespace { get; set; }
             public DateTime creationTimestamp { get; set; }
         }
 

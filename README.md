@@ -57,20 +57,26 @@ You may get Agones GameServer info.
 
 ```shell
 # GetGameServer
-  Host:Port = 192.168.65.3:7682
-    IsRunningOnKubernetes : True
-    IsAllocated : False
-    Name : simple-udp-rcdvt-hhbz8
-    Address : 192.168.65.3
-    Port : 7682
-    State : Ready
   Host:Port = 192.168.65.3:7969
     IsRunningOnKubernetes : True
     IsAllocated : False
+    NameSpace : default
     Name : simple-udp-rcdvt-xr6vn
     Address : 192.168.65.3
     Port : 7969
     State : Ready
+    Fleet : simple-udp
+    SdkVersion : 1.2.0
+  Host:Port = 192.168.65.3:7598
+    IsRunningOnKubernetes : True
+    IsAllocated : True
+    NameSpace : default
+    Name : simple-udp-rcdvt-zxpwl
+    Address : 192.168.65.3
+    Port : 7598
+    State : Allocated
+    Fleet : simple-udp
+    SdkVersion : 1.2.0
 ```
 
 

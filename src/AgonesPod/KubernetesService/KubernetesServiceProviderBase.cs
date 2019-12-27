@@ -5,6 +5,7 @@ using System.Net.Http.Headers;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
 using System.Threading.Tasks;
+using AgonesPod.Internal.Utf8Json;
 using AgonesPod.KubernetesService.Requests;
 using AgonesPod.KubernetesService.Respones;
 
@@ -32,12 +33,13 @@ namespace AgonesPod
             var response = JsonSerializer.Deserialize<GameServersResponse>(gameServers);
             var gameserverInfos = response.items.Select(x => new GameServerInfo()
             {
+                NameSpace = x.metadata.@namespace,
                 Name = x.metadata.name,
                 Address = x.status.address,
-                Port = x.status.ports.Any()
-                ? x.status.ports.FirstOrDefault().port
-                : 0,
+                Port = x?.status.ports?.FirstOrDefault().port ?? 0,
                 State = x.status.state,
+                Fleet = x.metadata.labels?.agonesdevfleet,
+                SdkVersion = x.metadata.annotations.agonesdevsdkversion,
             })
             .ToArray();
 
@@ -60,12 +62,14 @@ namespace AgonesPod
             var response = JsonSerializer.Deserialize<GameServerAllocationResponse>(allocation);
             var allocationInfo = new GameServerAllocationInfo()
             {
+                NameSpace = response.metadata.@namespace,
                 Name = response.metadata.name,
                 Address = response?.status?.address,
                 NodeName = response?.status?.nodeName,
                 Scheduling = response?.spec?.scheduling,
-                Port = response?.status.ports?.First().port ?? 0,
+                Port = response?.status.ports?.FirstOrDefault().port ?? 0,
                 State = response?.status?.state,
+                Fleet = response.spec.required?.matchLabels?.agonesdevfleet,
             };
             return allocationInfo;
         }

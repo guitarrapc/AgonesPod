@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace AgonesPod.KubernetesService.Respones
 {
@@ -36,7 +37,7 @@ namespace AgonesPod.KubernetesService.Respones
             public int generation { get; set; }
             public Labels labels { get; set; }
             public string name { get; set; }
-            public string _namespace { get; set; }
+            public string @namespace { get; set; }
             public Ownerreference[] ownerReferences { get; set; }
             public string resourceVersion { get; set; }
             public string selfLink { get; set; }
@@ -45,12 +46,17 @@ namespace AgonesPod.KubernetesService.Respones
 
         public class Annotations
         {
+            [JsonPropertyName("agones.dev/sdk-version")]
             public string agonesdevsdkversion { get; set; }
+            [JsonPropertyName("agones.dev/ready-container-id")]
+            public string agonesdevreadycontainerid { get; set; }
         }
 
         public class Labels
         {
+            [JsonPropertyName("agones.dev/fleet")]
             public string agonesdevfleet { get; set; }
+            [JsonPropertyName("agones.dev/gameserverset")]
             public string agonesdevgameserverset { get; set; }
             public string app { get; set; }
         }
