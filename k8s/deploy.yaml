@@ -16,7 +16,7 @@ spec:
       serviceAccountName: agones-rest
       containers:
         - name: agonespod
-          image: guitarrapc/agonespod:0.5.0
+          image: guitarrapc/agonespod:1.2.0
           imagePullPolicy: Always
           resources:
             limits:
