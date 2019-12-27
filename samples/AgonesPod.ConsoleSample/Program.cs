@@ -34,10 +34,13 @@ namespace AgonesPod.ConsoleSample
                     _logger.LogInformation($"  Host:Port = {server.Address}:{server.Port}");
                     _logger.LogInformation($"    {nameof(server.IsRunningOnKubernetes)} : {server.IsRunningOnKubernetes}");
                     _logger.LogInformation($"    {nameof(server.IsAllocated)} : {server.IsAllocated}");
+                    _logger.LogInformation($"    {nameof(server.NameSpace)} : {server.NameSpace}");
                     _logger.LogInformation($"    {nameof(server.Name)} : {server.Name}");
                     _logger.LogInformation($"    {nameof(server.Address)} : {server.Address}");
                     _logger.LogInformation($"    {nameof(server.Port)} : {server.Port}");
                     _logger.LogInformation($"    {nameof(server.State)} : {server.State}");
+                    _logger.LogInformation($"    {nameof(server.Fleet)} : {server.Fleet}");
+                    _logger.LogInformation($"    {nameof(server.SdkVersion)} : {server.SdkVersion}");
                 }
             }
 
@@ -59,12 +62,14 @@ namespace AgonesPod.ConsoleSample
                 _logger.LogInformation($"  Host:Port = {nameof(allocation)} = {allocation}");
                 _logger.LogInformation($"    {nameof(allocation.IsAllocated)} = {allocation.IsAllocated}");
                 _logger.LogInformation($"    {nameof(allocation.IsRunningOnKubernetes)} = {allocation.IsRunningOnKubernetes}");
+                _logger.LogInformation($"    {nameof(allocation.NameSpace)} : {allocation.NameSpace}");
                 _logger.LogInformation($"    {nameof(allocation.Name)} = {allocation.Name}");
                 _logger.LogInformation($"    {nameof(allocation.Address)} = {allocation.Address}");
                 _logger.LogInformation($"    {nameof(allocation.Port)} = {allocation.Port}");
                 _logger.LogInformation($"    {nameof(allocation.State)} = {allocation.State}");
                 _logger.LogInformation($"    {nameof(allocation.NodeName)} = {allocation.NodeName}");
                 _logger.LogInformation($"    {nameof(allocation.Scheduling)} = {allocation.Scheduling}");
+                _logger.LogInformation($"    {nameof(allocation.Fleet)} : {allocation.Fleet}");
             }
         }
     }
