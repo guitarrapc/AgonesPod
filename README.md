@@ -13,6 +13,18 @@ Kubernetes Client to manipulate Agones.
 
 > Spec: [Agones Kubernetes API \| Agones](https://agones.dev/site/docs/reference/agones_crd_api_reference/)
 
+## install
+
+**nuget**
+
+```shell
+dotnet add package AgonesPod
+```
+
+**kubernetes**
+
+> [deploy.yaml](k8s/deploy.yaml)
+
 ## docker
 
 Build and push Docker Image
