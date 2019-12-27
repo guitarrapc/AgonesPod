@@ -18,7 +18,7 @@ Kubernetes Client to manipulate Agones.
 Build and push Docker Image
 
 ```
-docker_version=0.4.4
+docker_version=0.5.0
 docker build -t agonespod:${docker_version} -f samples/AgonesPod.ConsoleSample/Dockerfile .
 docker tag agonespod:${docker_version} guitarrapc/agonespod:${docker_version}
 docker push guitarrapc/agonespod:${docker_version}
