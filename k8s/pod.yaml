@@ -8,10 +8,9 @@ metadata:
 spec:
   serviceAccountName: agones-rest
   containers:
-  - name: agonespod
-    image: guitarrapc/agonespod:0.3.2
-    imagePullPolicy: Always
-    command:
-      - sleep
-      - "86400"
-
+    - name: agonespod
+      image: guitarrapc/agonespod:0.4.3
+      imagePullPolicy: Always
+      command:
+        - sleep
+        - "86400"

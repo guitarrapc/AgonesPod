@@ -15,17 +15,27 @@ Kubernetes Client to manipulate Agones.
 
 ## how to run
 
-Apply to your kubernetes
+Apply Agones to your kubernetes cluster.
+
+> REF: https://agones.dev/site/docs/installation/#installing-agones
 
 ```
-kubectl kustomize ./k8s | kubectl apply -f -
-kubectl kustomize ./k8s | kubectl delete -f -
+$ helm repo add agones https://agones.dev/chart/stable
+$ helm upgrade --install --name agones --namespace agones-system agones/agones
+$ helm delete agones
+```
+
+deploy Agones Fleet and agonespod to your cluster.
+
+```
+kubectl apply -f ./k8s
+kubectl delete -f ./k8s
 ```
 
 Run agonespod on pod.
 
 ```
-kubectl exec -it agonespod dotnet AgonesPod.ConsoleSample.dll
+kubectl exec -it agonespod -- dotnet AgonesPod.ConsoleSample.dll getgameserver -fleetName simple-udp
 ```
 
 ## docker
@@ -33,9 +43,9 @@ kubectl exec -it agonespod dotnet AgonesPod.ConsoleSample.dll
 Build and push Docker Image
 
 ```
-docker build -t agonespod:0.4.1 -f samples/AgonesPod.ConsoleSample/Dockerfile .
-docker tag agonespod:0.4.1 guitarrapc/agonespod:0.4.1
-docker push guitarrapc/agonespod:0.4.1
+docker build -t agonespod:0.4.3 -f samples/AgonesPod.ConsoleSample/Dockerfile .
+docker tag agonespod:0.4.3 guitarrapc/agonespod:0.4.3
+docker push guitarrapc/agonespod:0.4.3
 ```
 
 ## debug
@@ -44,8 +54,8 @@ publish on linux and cp to pod and run.
 
 ```
 dotnet publish
-kubectl cp ./samples/AgonesPod.ConsoleSample/bin/Debug/netcoreapp2.2/publish/AgonesPod.ConsoleSample.dll agonespod:/app/AgonesPod.ConsoleSample.dll
-kubectl cp ./samples/AgonesPod.ConsoleSample/bin/Debug/netcoreapp2.2/publish/AgonesPod.dll agonespod:/app/AgonesPod.dll
+kubectl cp ./samples/AgonesPod.ConsoleSample/bin/Debug/netcoreapp3.1/publish/AgonesPod.ConsoleSample.dll agonespod:/app/AgonesPod.ConsoleSample.dll
+kubectl cp ./samples/AgonesPod.ConsoleSample/bin/Debug/netcoreapp3.1/publish/AgonesPod.dll agonespod:/app/AgonesPod.dll
 kubectl exec -it agonespod dotnet AgonesPod.ConsoleSample.dll getgameserver
 ```
 ```
