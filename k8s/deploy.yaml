@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agonespod
+  labels:
+    app: agonespod
+spec:
+  selector:
+    matchLabels:
+      app: agonespod
+  template:
+    metadata:
+      labels:
+        app: agonespod
+    spec:
+      serviceAccountName: agones-rest
+      containers:
+        - name: agonespod
+          image: guitarrapc/agonespod:0.4.4
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          command:
+            - sleep
+            - "86400"

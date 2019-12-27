@@ -11,7 +11,18 @@ Kubernetes Client to manipulate Agones.
 - [x] GetGameServersAsync: `GameServers` (GET)
 - [x] AllocateGameServersAsync: `Allocate` GameServer (POST)
 
-> NOTE: Shutdown()
+> Spec: [Agones Kubernetes API \| Agones](https://agones.dev/site/docs/reference/agones_crd_api_reference/)
+
+## docker
+
+Build and push Docker Image
+
+```
+docker_version=0.4.4
+docker build -t agonespod:${docker_version} -f samples/AgonesPod.ConsoleSample/Dockerfile .
+docker tag agonespod:${docker_version} guitarrapc/agonespod:${docker_version}
+docker push guitarrapc/agonespod:${docker_version}
+```
 
 ## how to run
 
@@ -37,7 +48,9 @@ kubectl delete -f ./agones-udp-server-csharp/k8s/
 Run agonespod on pod.
 
 ```
-kubectl exec -it agonespod -- dotnet AgonesPod.ConsoleSample.dll getgameserver -fleetName simple-udp
+kubectl apply -f ./k8s/
+pod=$(kubectl get pods -o json | jq -r .items[].metadata.name | grep agonespod | head -n 1)
+kubectl exec -it $pod -- dotnet AgonesPod.ConsoleSample.dll getgameserver
 ```
 
 You may get Agones GameServer info.
@@ -60,29 +73,25 @@ You may get Agones GameServer info.
     State : Ready
 ```
 
-## docker
 
-Build and push Docker Image
-
-```
-docker build -t agonespod:0.4.3 -f samples/AgonesPod.ConsoleSample/Dockerfile .
-docker tag agonespod:0.4.3 guitarrapc/agonespod:0.4.3
-docker push guitarrapc/agonespod:0.4.3
-```
-
-## debug
+## Debug
 
 publish on linux and cp to pod and run.
 
 ```
 dotnet publish
-kubectl cp ./samples/AgonesPod.ConsoleSample/bin/Debug/netcoreapp3.1/publish/AgonesPod.ConsoleSample.dll agonespod:/app/AgonesPod.ConsoleSample.dll
-kubectl cp ./samples/AgonesPod.ConsoleSample/bin/Debug/netcoreapp3.1/publish/AgonesPod.dll agonespod:/app/AgonesPod.dll
-kubectl exec -it agonespod dotnet AgonesPod.ConsoleSample.dll getgameserver
+pod=$(kubectl get pods -o json | jq -r .items[].metadata.name | grep agonespod | head -n 1)
+kubectl cp ./samples/AgonesPod.ConsoleSample/bin/Debug/netcoreapp3.1/publish/AgonesPod.ConsoleSample.dll ${pod}:/app/AgonesPod.ConsoleSample.dll
+kubectl cp ./samples/AgonesPod.ConsoleSample/bin/Debug/netcoreapp3.1/publish/AgonesPod.dll ${pod}:/app/AgonesPod.dll
+kubectl exec -it ${pod} dotnet AgonesPod.ConsoleSample.dll getgameserver
 ```
+
+sample usage
+
 ```
-kubectl exec -it agonespod -- dotnet AgonesPod.ConsoleSample.dll getgameserver
-kubectl exec -it agonespod -- dotnet AgonesPod.ConsoleSample.dll allocategameserver -f magiconion-chatserver
+pod=$(kubectl get pods -o json | jq -r .items[].metadata.name | grep agonespod | head -n 1)
+kubectl exec -it ${pod} -- dotnet AgonesPod.ConsoleSample.dll getgameserver
+kubectl exec -it ${pod} -- dotnet AgonesPod.ConsoleSample.dll allocategameserver -f simple-udp
 ```
 
 ### cURL
@@ -91,12 +100,99 @@ AgonesPod checking kubernetes API && Agones Controller behaviour with cURL.
 
 > [Access Agones via the Kubernetes API \| Agones](https://agones.dev/site/docs/guides/access-api/)
 
-curl allocate
+#### list agones resources
 
+request
+
+```shell
+pod=$(kubectl get pods -o json | jq -r .items[].metadata.name | grep agonespod | head -n 1)
+kubectl exec -it ${pod} /bin/bash
+TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+curl -s -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" https://$KUBERNETES_SERVICE_HOST:443/apis -k | grep agones -A 3 -B 1
 ```
+
+response
+
+```json
+    {
+      "name": "agones.dev",
+      "versions": [
+        {
+          "groupVersion": "agones.dev/v1",
+          "version": "v1"
+        }
+      ],
+      "preferredVersion": {
+        "groupVersion": "agones.dev/v1",
+        "version": "v1"
+      }
+    },
+    {
+      "name": "allocation.agones.dev",
+      "versions": [
+        {
+          "groupVersion": "allocation.agones.dev/v1",
+          "version": "v1"
+        }
+      ],
+      "preferredVersion": {
+        "groupVersion": "allocation.agones.dev/v1",
+        "version": "v1"
+      }
+    },
+    {
+      "name": "autoscaling.agones.dev",
+      "versions": [
+        {
+          "groupVersion": "autoscaling.agones.dev/v1",
+          "version": "v1"
+        }
+      ],
+      "preferredVersion": {
+        "groupVersion": "autoscaling.agones.dev/v1",
+        "version": "v1"
+      }
+    },
+    {
+      "name": "multicluster.agones.dev",
+      "versions": [
+        {
+          "groupVersion": "multicluster.agones.dev/v1alpha1",
+          "version": "v1alpha1"
+        }
+      ],
+      "preferredVersion": {
+        "groupVersion": "multicluster.agones.dev/v1alpha1",
+        "version": "v1alpha1"
+      }
+    },
+```
+
+#### getgameserver
+
+request
+
+```shell
+pod=$(kubectl get pods -o json | jq -r .items[].metadata.name | grep agonespod | head -n 1)
+kubectl exec -it ${pod} /bin/bash
+TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+curl -s -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" https://$KUBERNETES_SERVICE_HOST:443/apis/agones.dev/v1/namespaces/default/gameservers -k
+```
+
+response
+
+```json
+{"apiVersion":"agones.dev/v1","items":[{"apiVersion":"agones.dev/v1","kind":"GameServer","metadata":{"annotations":{"agones.dev/ready-container-id":"docker://f6603880bfb885906780709d9d5ae8ec8b2a02ba591d12e76dc27ebc101e36e6","agones.dev/sdk-version":"1.2.0"},"creationTimestamp":"2019-12-27T08:43:36Z","finalizers":["agones.dev"],"generateName":"simple-udp-rcdvt-","generation":6,"labels":{"agones.dev/fleet":"simple-udp","agones.dev/gameserverset":"simple-udp-rcdvt"},"name":"simple-udp-rcdvt-xr6vn","namespace":"default","ownerReferences":[{"apiVersion":"agones.dev/v1","blockOwnerDeletion":true,"controller":true,"kind":"GameServerSet","name":"simple-udp-rcdvt","uid":"f89d85f7-2884-11ea-850e-00155d644a2b"}],"resourceVersion":"1184988","selfLink":"/apis/agones.dev/v1/namespaces/default/gameservers/simple-udp-rcdvt-xr6vn","uid":"f8bcf887-2884-11ea-850e-00155d644a2b"},"spec":{"container":"simple-udp","health":{"failureThreshold":3,"initialDelaySeconds":15,"periodSeconds":5},"ports":[{"containerPort":7654,"hostPort":7969,"name":"default","portPolicy":"Dynamic","protocol":"UDP"}],"scheduling":"Packed","sdkServer":{"grpcPort":9357,"httpPort":9358,"logLevel":"Info"},"template":{"metadata":{"creationTimestamp":null},"spec":{"containers":[{"args":["run"],"image":"guitarrapc/agones-udp-server-csharp:1.2.1","imagePullPolicy":"Always","name":"simple-udp","resources":{"limits":{"cpu":"20m","memory":"64Mi"},"requests":{"cpu":"20m","memory":"64Mi"}}}]}}},"status":{"address":"192.168.65.3","nodeName":"docker-desktop","ports":[{"name":"default","port":7969}],"reservedUntil":null,"state":"Ready"}},{"apiVersion":"agones.dev/v1","kind":"GameServer","metadata":{"annotations":{"agones.dev/ready-container-id":"docker://30127e97b7248eacfd82d64f1556dbe73c2291d81007a23d73a2298091519534","agones.dev/sdk-version":"1.2.0"},"creationTimestamp":"2019-12-27T08:47:57Z","finalizers":["agones.dev"],"generateName":"simple-udp-rcdvt-","generation":7,"labels":{"agones.dev/fleet":"simple-udp","agones.dev/gameserverset":"simple-udp-rcdvt"},"name":"simple-udp-rcdvt-zxpwl","namespace":"default","ownerReferences":[{"apiVersion":"agones.dev/v1","blockOwnerDeletion":true,"controller":true,"kind":"GameServerSet","name":"simple-udp-rcdvt","uid":"f89d85f7-2884-11ea-850e-00155d644a2b"}],"resourceVersion":"1185633","selfLink":"/apis/agones.dev/v1/namespaces/default/gameservers/simple-udp-rcdvt-zxpwl","uid":"94ad2ab3-2885-11ea-850e-00155d644a2b"},"spec":{"container":"simple-udp","health":{"failureThreshold":3,"initialDelaySeconds":15,"periodSeconds":5},"ports":[{"containerPort":7654,"hostPort":7598,"name":"default","portPolicy":"Dynamic","protocol":"UDP"}],"scheduling":"Packed","sdkServer":{"grpcPort":9357,"httpPort":9358,"logLevel":"Info"},"template":{"metadata":{"creationTimestamp":null},"spec":{"containers":[{"args":["run"],"image":"guitarrapc/agones-udp-server-csharp:1.2.1","imagePullPolicy":"Always","name":"simple-udp","resources":{"limits":{"cpu":"20m","memory":"64Mi"},"requests":{"cpu":"20m","memory":"64Mi"}}}]}}},"status":{"address":"192.168.65.3","nodeName":"docker-desktop","ports":[{"name":"default","port":7598}],"reservedUntil":null,"state":"Allocated"}}],"kind":"GameServerList","metadata":{"continue":"","resourceVersion":"1191374","selfLink":"/apis/agones.dev/v1/namespaces/default/gameservers"}}
+```
+
+#### allocate
+
+request
+
+```shell
 kubectl exec -it agonespod /bin/bash
 TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
-curl -H "Authorization: Bearer $TOKEN" -d '{"apiVersion":"allocation.agones.dev/v1","kind":"GameServerAllocation","spec":{"required":{"matchLabels":{"agones.dev/fleet":"magiconion-chatserver"}}}}' -H "Content-Type: application/json" -X POST https://$KUBERNETES_SERVICE_HOST:443/apis/allocation.agones.dev/v1/namespaces/default/gameserverallocations -k
+curl -s -H "Authorization: Bearer $TOKEN" -d '{"apiVersion":"allocation.agones.dev/v1","kind":"GameServerAllocation","spec":{"required":{"matchLabels":{"agones.dev/fleet":"simple-udp"}}}}' -H "Content-Type: application/json" -X POST https://$KUBERNETES_SERVICE_HOST:443/apis/allocation.agones.dev/v1/namespaces/default/gameserverallocations -k
 ```
 
 response
