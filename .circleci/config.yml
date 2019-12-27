@@ -49,10 +49,15 @@ jobs:
       - checkout
       - setup_remote_docker:
           version: 17.09.0-ce
-      - run: docker build --build-arg VCS_REF=$(git rev-parse --short HEAD) --build-arg VERSION=$CIRCLE_TAG -t ${OWNER}/${IMAGE_NAME}:latest -f samples/AgonesPod.ConsoleSample/Dockerfile .
+      - run: docker build --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` --build-arg VCS_REF=$(git rev-parse --short HEAD) --build-arg VERSION=$CIRCLE_TAG -t ${OWNER}/${IMAGE_NAME}:latest -f samples/AgonesPod.ConsoleSample/Dockerfile .
       - run: docker tag ${OWNER}/${IMAGE_NAME}:latest ${OWNER}/${IMAGE_NAME}:$CIRCLE_TAG
       - run: docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
       - run: docker push ${OWNER}/${IMAGE_NAME}
+  update_badge:
+    docker:
+      - image: curlimages/curl:7.67.0
+    steps:
+      - run: curl -X POST https://hooks.microbadger.com/images/guitarrapc/agonespod/zr1dyK2Tln49xWkfKCWfe5gdYDI=
 workflows:
   build-and-push:
     jobs:
@@ -73,6 +78,14 @@ workflows:
           context: dockerhub-login
           requires:
             - build-test
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^[0-9]+\.[0-9]+\.[0-9]+$/
+      - update_badge:
+          requires:
+            - docker
           filters:
             branches:
               ignore: /.*/
