@@ -26,16 +26,38 @@ $ helm delete agones
 ```
 
 deploy Agones Fleet and agonespod to your cluster.
+let's use https://github.com/guitarrapc/agones-udp-server-csharp to wake up fleet.
 
 ```
-kubectl apply -f ./k8s
-kubectl delete -f ./k8s
+git clone https://github.com/guitarrapc/agones-udp-server-csharp.git
+kubectl apply -f ./agones-udp-server-csharp/k8s/
+kubectl delete -f ./agones-udp-server-csharp/k8s/
 ```
 
 Run agonespod on pod.
 
 ```
 kubectl exec -it agonespod -- dotnet AgonesPod.ConsoleSample.dll getgameserver -fleetName simple-udp
+```
+
+You may get Agones GameServer info.
+
+```shell
+# GetGameServer
+  Host:Port = 192.168.65.3:7682
+    IsRunningOnKubernetes : True
+    IsAllocated : False
+    Name : simple-udp-rcdvt-hhbz8
+    Address : 192.168.65.3
+    Port : 7682
+    State : Ready
+  Host:Port = 192.168.65.3:7969
+    IsRunningOnKubernetes : True
+    IsAllocated : False
+    Name : simple-udp-rcdvt-xr6vn
+    Address : 192.168.65.3
+    Port : 7969
+    State : Ready
 ```
 
 ## docker
