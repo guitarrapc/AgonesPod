@@ -49,7 +49,7 @@ jobs:
       - checkout
       - setup_remote_docker:
           version: 17.09.0-ce
-      - run: docker build --build-arg VCS_REF=$(git rev-parse --short HEAD) -t ${OWNER}/${IMAGE_NAME}:latest -f samples/AgonesPod.ConsoleSample/Dockerfile .
+      - run: docker build --build-arg VCS_REF=$(git rev-parse --short HEAD) --build-arg VERSION=$CIRCLE_TAG -t ${OWNER}/${IMAGE_NAME}:latest -f samples/AgonesPod.ConsoleSample/Dockerfile .
       - run: docker tag ${OWNER}/${IMAGE_NAME}:latest ${OWNER}/${IMAGE_NAME}:$CIRCLE_TAG
       - run: docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
       - run: docker push ${OWNER}/${IMAGE_NAME}
